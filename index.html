@@ -1,20 +1,220 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>QuietSpace Finder</title>
-    <style>
-      body{font-family:system-ui,Segoe UI,Roboto,Arial;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#f6f8fb}
-      .card{background:white;padding:24px;border-radius:8px;box-shadow:0 8px 24px rgba(2,6,23,0.08);text-align:center}
-      h1{margin:0 0 8px;font-size:1.25rem}
-      p{margin:0;color:#374151}
-    </style>
-  </head>
-  <body>
-    <div class="card">
-      <h1>QuietSpace Finder</h1>
-      <p>Hello — personalize this page and tell me what to add next.</p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuiteSpace Finder - Find Your Calm Space</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo-section">
+                <img src="assets/logo.svg" alt="QuiteSpace Finder Logo" class="logo-icon">
+                <span class="logo-text">QuiteSpace Finder</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#map" class="nav-link">Map</a></li>
+                <li><a href="#places" class="nav-link">Places</a></li>
+                <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+            </ul>
+            <button class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Find Your Calm Space</h1>
+            <p class="hero-subtitle">Discover quiet places for work, study, or rest. Real-time crowd insights. Community-powered.</p>
+            <button class="cta-button" id="ctaButton">Explore Now</button>
+        </div>
+        <div class="hero-image">
+            <svg class="hero-illustration" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                <!-- Background -->
+                <rect width="400" height="300" fill="#F0F9F7"/>
+                <!-- Sky -->
+                <circle cx="80" cy="60" r="40" fill="#E0F4F1" opacity="0.6"/>
+                <!-- Tree -->
+                <rect x="150" y="150" width="30" height="80" fill="#8DB8A0"/>
+                <circle cx="165" cy="140" r="50" fill="#A8D5C4"/>
+                <!-- Park bench -->
+                <rect x="240" y="180" width="80" height="8" fill="#B8A98F"/>
+                <rect x="255" y="188" width="8" height="30" fill="#8B7D6B"/>
+                <rect x="305" y="188" width="8" height="30" fill="#8B7D6B"/>
+                <!-- Person sitting -->
+                <circle cx="280" cy="165" r="12" fill="#9E8B7E"/>
+                <ellipse cx="280" cy="185" rx="8" ry="10" fill="#A8C5D8"/>
+                <!-- Person on bench -->
+                <circle cx="320" cy="172" r="10" fill="#9E8B7E"/>
+                <ellipse cx="320" cy="190" rx="6" ry="8" fill="#D4C5B9"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section" id="map">
+        <div class="section-header">
+            <h2>Discover Quiet Spaces Near You</h2>
+            <p>Real-time crowdsourcing data from our community</p>
+        </div>
+        <div class="map-container">
+            <div id="map-placeholder" class="map-placeholder">
+                <div class="map-grid">
+                    <div class="grid-item" id="gridItem1"></div>
+                    <div class="grid-item" id="gridItem2"></div>
+                    <div class="grid-item" id="gridItem3"></div>
+                    <div class="grid-item" id="gridItem4"></div>
+                </div>
+                <div class="map-overlay">
+                    <svg class="pin-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#9AC5BB"/>
+                    </svg>
+                    <p>Interactive map coming with Mapbox integration</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Places Section -->
+    <section class="places-section" id="places">
+        <div class="section-header">
+            <h2>Popular Quiet Spaces</h2>
+            <p>Browse and check in to help the community</p>
+        </div>
+        <div class="filter-controls">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="library">Libraries</button>
+            <button class="filter-btn" data-filter="park">Parks</button>
+            <button class="filter-btn" data-filter="cafe">Cafes</button>
+        </div>
+        <div class="places-grid" id="placesGrid">
+            <!-- Places will be populated by JavaScript -->
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-header">
+            <h2>How QuiteSpace Finder Works</h2>
+            <p>Simple steps to find your perfect calm space</p>
+        </div>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>Browse Spaces</h3>
+                <p>Explore quiet places in your area - libraries, parks, and cafes</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>Check Real-Time Data</h3>
+                <p>See current crowd levels and noise indicators reported by users</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3>Check In</h3>
+                <p>Share your experience and help others find the perfect quiet spot</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <h3>Book or Visit</h3>
+                <p>Reserve a seat or head over right away - enjoy your peaceful moment</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="about-content">
+            <h2>About QuiteSpace Finder</h2>
+            <p>We believe everyone deserves access to calm, quiet spaces for work, study, and rest. Whether you're a student cramming for exams, a remote worker needing focus, or a senior seeking peaceful moments, QuiteSpace Finder helps you discover and share information about the best quiet places around you.</p>
+            <p>Our community-powered platform uses real-time check-ins and noise-level reporting to help you make informed decisions about where to spend your time.</p>
+            <div class="impact-stats">
+                <div class="stat">
+                    <h4>500+</h4>
+                    <p>Quiet Spaces</p>
+                </div>
+                <div class="stat">
+                    <h4>10k+</h4>
+                    <p>Active Users</p>
+                </div>
+                <div class="stat">
+                    <h4>100%</h4>
+                    <p>Community-Powered</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>QuiteSpace Finder</h4>
+                <p>Find your calm space. Share your peace.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#map">Map</a></li>
+                    <li><a href="#places">Places</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Community</h4>
+                <ul>
+                    <li><a href="#">Report a Space</a></li>
+                    <li><a href="#">Add a Place</a></li>
+                    <li><a href="#">Help & Support</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 QuiteSpace Finder. Made with 🤍 for peaceful moments.</p>
+        </div>
+    </footer>
+
+    <!-- Modal for place details -->
+    <div class="modal" id="placeModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+            </div>
+            <div class="modal-body">
+                <div class="modal-detail">
+                    <h4>Type</h4>
+                    <p id="modalType"></p>
+                </div>
+                <div class="modal-detail">
+                    <h4>Current Crowd Level</h4>
+                    <div class="crowd-indicator" id="modalCrowd"></div>
+                </div>
+                <div class="modal-detail">
+                    <h4>Noise Level</h4>
+                    <div class="noise-bars" id="modalNoise"></div>
+                </div>
+                <div class="modal-detail">
+                    <h4>Recent Check-ins</h4>
+                    <div id="modalCheckins"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-checkin" id="checkinBtn">Check In Now</button>
+                <button class="btn-secondary" id="bookBtn">Book a Seat</button>
+            </div>
+        </div>
     </div>
-  </body>
+
+    <script src="script.js"></script>
+</body>
 </html>
