@@ -4,12 +4,13 @@
     --primary-light: #8C916C;     /* moss green — hover/accent */
     --primary-earth: #95714F;
     --primary-moss: #8C916C;
+    --title-color: #4A5E3A;
     --primary-pale: #D4E8E4;
     --accent-sand: #C7AF94;
     --accent-soft: #C7AF94;       /* sand — used for soft backgrounds */
     --background: #EADED0;
-    --text-dark: #2C3E3D;
-    --text-light: #5A7B78;
+    --text-dark: #8C916C;
+    --text-light: #8C916C;
     --border-light: #C5DDD9;
     --success: #A8D5C4;
     --warning: #E8C89C;
@@ -39,7 +40,7 @@ body {
 /* ===== TYPOGRAPHY ===== */
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
-    color: var(--text-dark);
+    color: var(--title-color);
 }
 
 h1 {
