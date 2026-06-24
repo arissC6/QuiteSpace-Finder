@@ -5,6 +5,8 @@ const places = [
         name: "Central Library",
         type: "library",
         emoji: "📚",
+        lat: 40.7580,
+        lng: -73.9855,
         crowd: 2,
         noise: 1,
         checkins: 342,
@@ -19,6 +21,8 @@ const places = [
         name: "Green Park",
         type: "park",
         emoji: "🌳",
+        lat: 40.7829,
+        lng: -73.9654,
         crowd: 1,
         noise: 2,
         checkins: 189,
@@ -33,6 +37,8 @@ const places = [
         name: "Peaceful Cafe",
         type: "cafe",
         emoji: "☕",
+        lat: 40.7489,
+        lng: -73.9680,
         crowd: 3,
         noise: 2,
         checkins: 256,
@@ -47,6 +53,8 @@ const places = [
         name: "Riverside Reading Room",
         type: "library",
         emoji: "📖",
+        lat: 40.7614,
+        lng: -73.9776,
         crowd: 1,
         noise: 1,
         checkins: 428,
@@ -61,6 +69,8 @@ const places = [
         name: "Zen Garden Park",
         type: "park",
         emoji: "🌸",
+        lat: 40.7505,
+        lng: -73.9972,
         crowd: 2,
         noise: 1,
         checkins: 195,
@@ -75,6 +85,8 @@ const places = [
         name: "Cozy Corner Cafe",
         type: "cafe",
         emoji: "🍰",
+        lat: 40.7549,
+        lng: -73.9840,
         crowd: 2,
         noise: 2,
         checkins: 312,
@@ -95,16 +107,116 @@ const ctaButton = document.getElementById('ctaButton');
 const navToggle = document.getElementById('navToggle');
 const navLinks = document.querySelector('.nav-links');
 
+// ===== MAP STATE =====
+let map = null;
+let markers = [];
+
 // ===== STATE =====
 let currentFilter = 'all';
 let currentPlace = null;
 
 // ===== INITIALIZE =====
 document.addEventListener('DOMContentLoaded', () => {
+    initializeMap();
     renderPlaces();
     setupEventListeners();
     animateElements();
 });
+
+// ===== INITIALIZE LEAFLET MAP =====
+function initializeMap() {
+    // Initialize map centered on average coordinates (New York City area)
+    const centerLat = 40.7580;
+    const centerLng = -73.9855;
+    
+    map = L.map('leaflet-map').setView([centerLat, centerLng], 13);
+    
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(map);
+    
+    // Add markers for all places
+    places.forEach(place => {
+        createMapMarker(place);
+    });
+    
+    // Invalidate size to ensure proper rendering
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 100);
+}
+
+// ===== CREATE MAP MARKER =====
+function createMapMarker(place) {
+    // Create custom HTML for marker
+    const crowdColor = place.crowd <= 2 ? '#A8D5C4' : place.crowd === 3 ? '#E8C89C' : '#D4B8A0';
+    
+    // Create custom icon
+    const customIcon = L.divIcon({
+        html: `
+            <div style="
+                background-color: ${crowdColor};
+                border: 3px solid white;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                cursor: pointer;
+            ">
+                ${place.emoji}
+            </div>
+        `,
+        iconSize: [40, 40],
+        className: 'custom-marker'
+    });
+    
+    // Create marker
+    const marker = L.marker([place.lat, place.lng], { icon: customIcon }).addTo(map);
+    
+    // Create popup content
+    const popupHTML = `
+        <div style="font-family: 'Segoe UI', sans-serif; width: 220px;">
+            <h3 style="margin: 0 0 0.5rem 0; color: #2C3E3D; font-size: 1rem;">${place.name}</h3>
+            <p style="margin: 0.3rem 0; color: #5A7B78; font-size: 0.9rem;"><strong>Type:</strong> ${capitalizeType(place.type)}</p>
+            <p style="margin: 0.3rem 0; color: #5A7B78; font-size: 0.9rem;"><strong>Crowd:</strong> ${generateCrowdDots(place.crowd)}</p>
+            <p style="margin: 0.3rem 0; color: #5A7B78; font-size: 0.9rem;"><strong>Noise:</strong> ${generateNoiseBars(place.noise)}</p>
+            <p style="margin: 0.5rem 0 0 0; color: #5A7B78; font-size: 0.85rem;">✓ ${place.checkins} check-ins</p>
+            <button onclick="openModalFromMap(${place.id})" style="
+                width: 100%;
+                margin-top: 0.8rem;
+                padding: 0.5rem;
+                background-color: #9AC5BB;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 0.9rem;
+            ">View Details</button>
+        </div>
+    `;
+    
+    marker.bindPopup(popupHTML);
+    marker.on('click', () => {
+        openModalFromMap(place.id);
+    });
+    
+    markers.push(marker);
+}
+
+// ===== OPEN MODAL FROM MAP =====
+function openModalFromMap(placeId) {
+    const place = places.find(p => p.id === placeId);
+    if (place) {
+        openModal(place);
+    }
+}
 
 // ===== RENDER PLACES =====
 function renderPlaces(filter = 'all') {
@@ -225,7 +337,7 @@ function setupEventListeners() {
 
     // CTA button
     ctaButton.addEventListener('click', () => {
-        document.getElementById('places').scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('map').scrollIntoView({ behavior: 'smooth' });
     });
 
     // Mobile nav toggle
@@ -375,4 +487,4 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-console.log('QuiteSpace Finder initialized successfully! 🌿');
+console.log('QuiteSpace Finder with interactive map initialized successfully! 🌿');
