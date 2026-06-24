@@ -1,214 +1,452 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuietSpace Finder - Find Your Calm Space</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
-</head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo-section">
-                <img src="assets/logo.svg" alt="QuietSpace Finder Logo" class="logo-icon">
-                <span class="logo-text">QuietSpace Finder</span>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#map" class="nav-link">Map</a></li>
-                <li><a href="#places" class="nav-link">Places</a></li>
-                <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
-                <li><a href="#about" class="nav-link">About</a></li>
-            </ul>
-            <button class="nav-toggle" id="navToggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-    </nav>
+// ===== SAMPLE DATA =====
+const places = [
+    {
+        id: 1,
+        name: "Biblioteka e Fierit",
+        type: "library",
+        emoji: "📚",
+        lat: 40.7239,
+        lng: 19.5567,
+        crowd: 2,
+        noise: 1,
+        checkins: 342,
+        lastCheckins: [
+            { name: "Sara", time: "5 mins ago" },
+            { name: "Mira", time: "15 mins ago" },
+            { name: "Elsa", time: "30 mins ago" }
+        ]
+    },
+    {
+        id: 2,
+        name: "Parku Qendror",
+        type: "park",
+        emoji: "🌳",
+        lat: 40.7260,
+        lng: 19.5590,
+        crowd: 1,
+        noise: 2,
+        checkins: 189,
+        lastCheckins: [
+            { name: "Joni", time: "10 mins ago" },
+            { name: "Lisa", time: "25 mins ago" },
+            { name: "Dani", time: "40 mins ago" }
+        ]
+    },
+    {
+        id: 3,
+        name: "Kafja Qetësia",
+        type: "cafe",
+        emoji: "☕",
+        lat: 40.7220,
+        lng: 19.5550,
+        crowd: 3,
+        noise: 2,
+        checkins: 256,
+        lastCheckins: [
+            { name: "Aleks", time: "2 mins ago" },
+            { name: "Sonia", time: "12 mins ago" },
+            { name: "Tomi", time: "35 mins ago" }
+        ]
+    },
+    {
+        id: 4,
+        name: "Salla e Leximit Bregdet",
+        type: "library",
+        emoji: "📖",
+        lat: 40.7250,
+        lng: 19.5610,
+        crowd: 1,
+        noise: 1,
+        checkins: 428,
+        lastCheckins: [
+            { name: "Rezi", time: "7 mins ago" },
+            { name: "Kris", time: "22 mins ago" },
+            { name: "Nina", time: "45 mins ago" }
+        ]
+    },
+    {
+        id: 5,
+        name: "Sheshi Çlirimtarëve",
+        type: "park",
+        emoji: "🌸",
+        lat: 40.7245,
+        lng: 19.5530,
+        crowd: 2,
+        noise: 1,
+        checkins: 195,
+        lastCheckins: [
+            { name: "Marko", time: "8 mins ago" },
+            { name: "Julia", time: "18 mins ago" },
+            { name: "Oli", time: "50 mins ago" }
+        ]
+    },
+    {
+        id: 6,
+        name: "Kafja e Qetë",
+        type: "cafe",
+        emoji: "🍰",
+        lat: 40.7210,
+        lng: 19.5580,
+        crowd: 2,
+        noise: 2,
+        checkins: 312,
+        lastCheckins: [
+            { name: "Luna", time: "4 mins ago" },
+            { name: "Ryan", time: "16 mins ago" },
+            { name: "Zoe", time: "38 mins ago" }
+        ]
+    }
+];
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">Find Your Calm Space</h1>
-            <p class="hero-subtitle">Discover quiet places for work, study, or rest. Real-time crowd insights. Community-powered.</p>
-            <button class="cta-button" id="ctaButton">Explore Now</button>
-        </div>
-        <div class="hero-image">
-            <svg class="hero-illustration" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-                <!-- Background -->
-                <rect width="400" height="300" fill="#EDF2E8"/>
-                <!-- Sky -->
-                <circle cx="80" cy="60" r="40" fill="#C8DDB8" opacity="0.6"/>
-                <!-- Tree -->
-                <rect x="150" y="150" width="30" height="80" fill="#4A6741"/>
-                <circle cx="165" cy="140" r="50" fill="#3D5C35"/>
-                <!-- Park bench -->
-                <rect x="240" y="180" width="80" height="8" fill="#B8A98F"/>
-                <rect x="255" y="188" width="8" height="30" fill="#8B7D6B"/>
-                <rect x="305" y="188" width="8" height="30" fill="#8B7D6B"/>
-                <!-- Person sitting -->
-                <circle cx="280" cy="165" r="12" fill="#9E8B7E"/>
-                <ellipse cx="280" cy="185" rx="8" ry="10" fill="#A8C5D8"/>
-                <!-- Person on bench -->
-                <circle cx="320" cy="172" r="10" fill="#9E8B7E"/>
-                <ellipse cx="320" cy="190" rx="6" ry="8" fill="#D4C5B9"/>
-            </svg>
-        </div>
-    </section>
+// ===== DOM ELEMENTS =====
+const placesGrid = document.getElementById('placesGrid');
+const filterButtons = document.querySelectorAll('.filter-btn');
+const modal = document.getElementById('placeModal');
+const closeModal = document.querySelector('.close-modal');
+const ctaButton = document.getElementById('ctaButton');
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.querySelector('.nav-links');
 
-    <!-- Map Section -->
-    <section class="map-section" id="map">
-        <div class="section-header">
-            <h2>Discover Quiet Spaces Near You</h2>
-            <p>Real-time crowdsourcing data from our community</p>
-        </div>
-        <div class="map-container">
-            <div id="map-placeholder" class="map-placeholder">
-                <div id="leaflet-map" style="width:100%;height:100%;"></div>
-            </div>
-        </div>
-    </section>
+// ===== MAP STATE =====
+let map = null;
+let markers = [];
 
-    <!-- Places Section -->
-    <section class="places-section" id="places">
-        <div class="section-header">
-            <h2>Popular Quiet Spaces</h2>
-            <p>Browse and check in to help the community</p>
-        </div>
-        <div class="filter-controls">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="library">Libraries</button>
-            <button class="filter-btn" data-filter="park">Parks</button>
-            <button class="filter-btn" data-filter="cafe">Cafes</button>
-        </div>
-        <div class="places-grid" id="placesGrid">
-            <!-- Places will be populated by JavaScript -->
-        </div>
-    </section>
+// ===== STATE =====
+let currentFilter = 'all';
+let currentPlace = null;
 
-    <!-- How It Works Section -->
-    <section class="how-it-works" id="how-it-works">
-        <div class="section-header">
-            <h2>How QuietSpace Finder Works</h2>
-            <p>Simple steps to find your perfect calm space</p>
-        </div>
-        <div class="steps-grid">
-            <div class="step-card">
-                <div class="step-number">1</div>
-                <h3>Browse Spaces</h3>
-                <p>Explore quiet places in your area - libraries, parks, and cafes</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">2</div>
-                <h3>Check Real-Time Data</h3>
-                <p>See current crowd levels and noise indicators reported by users</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">3</div>
-                <h3>Check In</h3>
-                <p>Share your experience and help others find the perfect quiet spot</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">4</div>
-                <h3>Book or Visit</h3>
-                <p>Reserve a seat or head over right away - enjoy your peaceful moment</p>
-            </div>
-        </div>
-    </section>
+// ===== INITIALIZE =====
+// Wait for window load (not just DOMContentLoaded) so Leaflet is ready
+window.addEventListener('load', () => {
+    initializeMap();
+    renderPlaces();
+    setupEventListeners();
+    animateElements();
+});
 
-    <!-- About Section -->
-    <section class="about" id="about">
-        <div class="about-content">
-            <h2>About QuietSpace Finder</h2>
-            <p>We believe everyone deserves access to calm, quiet spaces for work, study, and rest. Whether you're a student cramming for exams, a remote worker needing focus, or a senior seeking peaceful moments, we're here to help you find your perfect sanctuary.</p>
-            <p>Our community-powered platform uses real-time check-ins and noise-level reporting to help you make informed decisions about where to spend your time.</p>
-            <div class="impact-stats">
-                <div class="stat">
-                    <h4>500+</h4>
-                    <p>Quiet Spaces</p>
+// ===== INITIALIZE LEAFLET MAP =====
+function initializeMap() {
+    if (typeof L === 'undefined') {
+        console.error('Leaflet not loaded yet');
+        return;
+    }
+
+    const centerLat = 40.7239;
+    const centerLng = 19.5567;
+
+    map = L.map('leaflet-map').setView([centerLat, centerLng], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(map);
+
+    places.forEach(place => {
+        createMapMarker(place);
+    });
+
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 100);
+}
+
+// ===== CREATE MAP MARKER =====
+function createMapMarker(place) {
+    const crowdColor = place.crowd <= 2 ? '#A8C5A0' : place.crowd === 3 ? '#E8C89C' : '#D4B8A0';
+
+    const customIcon = L.divIcon({
+        html: `
+            <div style="
+                background-color: ${crowdColor};
+                border: 3px solid white;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 20px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                cursor: pointer;
+            ">
+                ${place.emoji}
+            </div>
+        `,
+        iconSize: [40, 40],
+        className: 'custom-marker'
+    });
+
+    const marker = L.marker([place.lat, place.lng], { icon: customIcon }).addTo(map);
+
+    const popupHTML = `
+        <div style="font-family: 'Playfair Display', serif; width: 220px;">
+            <h3 style="margin: 0 0 0.5rem 0; color: #1A2E10; font-size: 1rem;">${place.name}</h3>
+            <p style="margin: 0.3rem 0; color: #8C916C; font-size: 0.9rem;"><strong>Type:</strong> ${capitalizeType(place.type)}</p>
+            <p style="margin: 0.3rem 0; color: #8C916C; font-size: 0.9rem;"><strong>Check-ins:</strong> ${place.checkins}</p>
+            <button onclick="openModalFromMap(${place.id})" style="
+                width: 100%;
+                margin-top: 0.8rem;
+                padding: 0.5rem;
+                background-color: #4A6741;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 0.9rem;
+                font-family: 'Playfair Display', serif;
+            ">View Details</button>
+        </div>
+    `;
+
+    marker.bindPopup(popupHTML);
+    markers.push(marker);
+}
+
+// ===== OPEN MODAL FROM MAP =====
+function openModalFromMap(placeId) {
+    const place = places.find(p => p.id === placeId);
+    if (place) {
+        openModal(place);
+    }
+}
+
+// ===== RENDER PLACES =====
+function renderPlaces(filter = 'all') {
+    placesGrid.innerHTML = '';
+
+    let filteredPlaces = places;
+    if (filter !== 'all') {
+        filteredPlaces = places.filter(place => place.type === filter);
+    }
+
+    filteredPlaces.forEach((place, index) => {
+        const placeCard = createPlaceCard(place);
+        placesGrid.appendChild(placeCard);
+        setTimeout(() => {
+            placeCard.style.animation = `slideIn 0.5s ease forwards`;
+        }, index * 50);
+    });
+}
+
+// ===== CREATE PLACE CARD =====
+function createPlaceCard(place) {
+    const card = document.createElement('div');
+    card.className = 'place-card';
+    card.innerHTML = `
+        <div class="place-image">
+            <span>${place.emoji}</span>
+        </div>
+        <div class="place-content">
+            <h3>${place.name}</h3>
+            <span class="place-type">${capitalizeType(place.type)}</span>
+            <div class="place-details">
+                <div class="detail-row">
+                    <span class="detail-label">👥 Crowd Level:</span>
+                    <div class="crowd-level">
+                        ${generateCrowdDots(place.crowd)}
+                    </div>
                 </div>
-                <div class="stat">
-                    <h4>10k+</h4>
-                    <p>Active Users</p>
-                </div>
-                <div class="stat">
-                    <h4>100%</h4>
-                    <p>Community-Powered</p>
+                <div class="detail-row">
+                    <span class="detail-label">🔊 Noise Level:</span>
+                    <div class="noise-indicator">
+                        ${generateNoiseBars(place.noise)}
+                    </div>
                 </div>
             </div>
+            <div class="place-footer">
+                <div class="checkin-count">✓ ${place.checkins} people checked in</div>
+                <button class="place-btn">View Details</button>
+            </div>
         </div>
-    </section>
+    `;
+    card.addEventListener('click', () => openModal(place));
+    return card;
+}
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>QuietSpace Finder</h4>
-                <p>Find your calm space. Share your peace.</p>
-            </div>
-            <div class="footer-section">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="#map">Map</a></li>
-                    <li><a href="#places">Places</a></li>
-                    <li><a href="#how-it-works">How It Works</a></li>
-                    <li><a href="#about">About</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Community</h4>
-                <ul>
-                    <li><a href="#">Report a Space</a></li>
-                    <li><a href="#">Add a Place</a></li>
-                    <li><a href="#">Help & Support</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 QuietSpace Finder. Made with 🤍 for peaceful moments.</p>
-        </div>
-    </footer>
+// ===== GENERATE CROWD DOTS =====
+function generateCrowdDots(level) {
+    let dots = '';
+    for (let i = 1; i <= 5; i++) {
+        dots += `<div class="crowd-dot ${i <= level ? 'filled' : ''}"></div>`;
+    }
+    return dots;
+}
 
-    <!-- Modal for place details -->
-    <div class="modal" id="placeModal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <div class="modal-header">
-                <h2 id="modalTitle"></h2>
-            </div>
-            <div class="modal-body">
-                <div class="modal-detail">
-                    <h4>Type</h4>
-                    <p id="modalType"></p>
-                </div>
-                <div class="modal-detail">
-                    <h4>Current Crowd Level</h4>
-                    <div class="crowd-indicator" id="modalCrowd"></div>
-                </div>
-                <div class="modal-detail">
-                    <h4>Noise Level</h4>
-                    <div class="noise-bars" id="modalNoise"></div>
-                </div>
-                <div class="modal-detail">
-                    <h4>Recent Check-ins</h4>
-                    <div id="modalCheckins"></div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-checkin" id="checkinBtn">Check In Now</button>
-                <button class="btn-secondary" id="bookBtn">Book a Seat</button>
-            </div>
-        </div>
-    </div>
+// ===== GENERATE NOISE BARS =====
+function generateNoiseBars(level) {
+    let bars = '';
+    for (let i = 1; i <= 5; i++) {
+        bars += `<div class="noise-bar ${i <= level ? 'active' : ''}"></div>`;
+    }
+    return bars;
+}
 
-    <script src="script.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-</body>
-</html>
+// ===== CAPITALIZE TYPE =====
+function capitalizeType(type) {
+    return type.charAt(0).toUpperCase() + type.slice(1);
+}
+
+// ===== SETUP EVENT LISTENERS =====
+function setupEventListeners() {
+    filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            currentFilter = button.dataset.filter;
+            renderPlaces(currentFilter);
+        });
+    });
+
+    closeModal.addEventListener('click', () => {
+        modal.classList.remove('show');
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.classList.remove('show');
+        }
+    });
+
+    document.getElementById('checkinBtn').addEventListener('click', () => {
+        showNotification(`✓ You've checked in to ${currentPlace.name}!`);
+        currentPlace.checkins++;
+        modal.classList.remove('show');
+        renderPlaces(currentFilter);
+    });
+
+    document.getElementById('bookBtn').addEventListener('click', () => {
+        showNotification(`🎫 Booking feature coming soon for ${currentPlace.name}!`);
+    });
+
+    ctaButton.addEventListener('click', () => {
+        document.getElementById('map').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    navToggle.addEventListener('click', () => {
+        navToggle.classList.toggle('active');
+        navLinks.style.display = navToggle.classList.contains('active') ? 'flex' : 'none';
+        navLinks.style.position = 'absolute';
+        navLinks.style.top = '70px';
+        navLinks.style.left = '0';
+        navLinks.style.right = '0';
+        navLinks.style.flexDirection = 'column';
+        navLinks.style.gap = '1rem';
+        navLinks.style.padding = '1.5rem 2rem';
+        navLinks.style.backgroundColor = '#FFFFFF';
+        navLinks.style.boxShadow = '0 5px 15px rgba(154, 197, 187, 0.1)';
+        navLinks.style.zIndex = '999';
+    });
+
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            navToggle.classList.remove('active');
+            navLinks.style.display = 'none';
+        });
+    });
+}
+
+// ===== OPEN MODAL =====
+function openModal(place) {
+    currentPlace = place;
+    document.getElementById('modalTitle').textContent = place.name;
+    document.getElementById('modalType').textContent = capitalizeType(place.type);
+    document.getElementById('modalCrowd').innerHTML = generateCrowdDots(place.crowd);
+    document.getElementById('modalNoise').innerHTML = generateNoiseBars(place.noise);
+
+    const checkinsHtml = place.lastCheckins
+        .map(checkin => `<div style="margin-bottom: 0.5rem;"><strong>${checkin.name}</strong> - ${checkin.time}</div>`)
+        .join('');
+    document.getElementById('modalCheckins').innerHTML = checkinsHtml;
+
+    modal.classList.add('show');
+}
+
+// ===== NOTIFICATION =====
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #4A6741;
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 50px;
+        box-shadow: 0 5px 20px rgba(74, 103, 65, 0.3);
+        z-index: 3000;
+        animation: slideIn 0.3s ease;
+        font-family: 'Playfair Display', serif;
+    `;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// ===== ANIMATIONS =====
+function animateElements() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animation = 'slideIn 0.6s ease forwards';
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.step-card').forEach(card => observer.observe(card));
+    document.querySelectorAll('.stat').forEach(stat => observer.observe(stat));
+}
+
+// ===== REAL-TIME SIMULATION =====
+setInterval(() => {
+    places.forEach(place => {
+        place.crowd = Math.floor(Math.random() * 4) + 1;
+        place.noise = Math.floor(Math.random() * 3) + 1;
+        if (Math.random() > 0.7) place.checkins += 1;
+    });
+    if (!modal.classList.contains('show')) {
+        renderPlaces(currentFilter);
+    }
+}, 30000);
+
+// ===== KEYBOARD SHORTCUTS =====
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal.classList.contains('show')) {
+        modal.classList.remove('show');
+    }
+});
+
+// ===== ACCESSIBILITY =====
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Tab' && modal.classList.contains('show')) {
+        const focusableElements = modal.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+        if (event.shiftKey && document.activeElement === firstElement) {
+            lastElement.focus();
+            event.preventDefault();
+        } else if (!event.shiftKey && document.activeElement === lastElement) {
+            firstElement.focus();
+            event.preventDefault();
+        }
+    }
+});
+
+// ===== ADDITIONAL ANIMATIONS =====
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+
+console.log('QuietSpace Finder initialized');
