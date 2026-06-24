@@ -2,91 +2,91 @@
 const places = [
     {
         id: 1,
-        name: "Central Library",
+        name: "Biblioteka e Fierit",
         type: "library",
         emoji: "📚",
-        lat: 40.7580,
-        lng: -73.9855,
+        lat: 40.7239,
+        lng: 19.5567,
         crowd: 2,
         noise: 1,
         checkins: 342,
         lastCheckins: [
-            { name: "Sarah", time: "5 mins ago" },
-            { name: "Mike", time: "15 mins ago" },
-            { name: "Emma", time: "30 mins ago" }
+            { name: "Sara", time: "5 mins ago" },
+            { name: "Mira", time: "15 mins ago" },
+            { name: "Elsa", time: "30 mins ago" }
         ]
     },
     {
         id: 2,
-        name: "Green Park",
+        name: "Parku Qendror",
         type: "park",
         emoji: "🌳",
-        lat: 40.7829,
-        lng: -73.9654,
+        lat: 40.7260,
+        lng: 19.5590,
         crowd: 1,
         noise: 2,
         checkins: 189,
         lastCheckins: [
-            { name: "John", time: "10 mins ago" },
+            { name: "Joni", time: "10 mins ago" },
             { name: "Lisa", time: "25 mins ago" },
-            { name: "David", time: "40 mins ago" }
+            { name: "Dani", time: "40 mins ago" }
         ]
     },
     {
         id: 3,
-        name: "Peaceful Cafe",
+        name: "Kafja Qetësia",
         type: "cafe",
         emoji: "☕",
-        lat: 40.7489,
-        lng: -73.9680,
+        lat: 40.7220,
+        lng: 19.5550,
         crowd: 3,
         noise: 2,
         checkins: 256,
         lastCheckins: [
-            { name: "Alex", time: "2 mins ago" },
-            { name: "Sophie", time: "12 mins ago" },
-            { name: "Tom", time: "35 mins ago" }
+            { name: "Aleks", time: "2 mins ago" },
+            { name: "Sonia", time: "12 mins ago" },
+            { name: "Tomi", time: "35 mins ago" }
         ]
     },
     {
         id: 4,
-        name: "Riverside Reading Room",
+        name: "Salla e Leximit Bregdet",
         type: "library",
         emoji: "📖",
-        lat: 40.7614,
-        lng: -73.9776,
+        lat: 40.7250,
+        lng: 19.5610,
         crowd: 1,
         noise: 1,
         checkins: 428,
         lastCheckins: [
-            { name: "Rachel", time: "7 mins ago" },
-            { name: "Chris", time: "22 mins ago" },
+            { name: "Rezi", time: "7 mins ago" },
+            { name: "Kris", time: "22 mins ago" },
             { name: "Nina", time: "45 mins ago" }
         ]
     },
     {
         id: 5,
-        name: "Zen Garden Park",
+        name: "Sheshi Çlirimtarëve",
         type: "park",
         emoji: "🌸",
-        lat: 40.7505,
-        lng: -73.9972,
+        lat: 40.7245,
+        lng: 19.5530,
         crowd: 2,
         noise: 1,
         checkins: 195,
         lastCheckins: [
-            { name: "Marcus", time: "8 mins ago" },
+            { name: "Marko", time: "8 mins ago" },
             { name: "Julia", time: "18 mins ago" },
-            { name: "Oliver", time: "50 mins ago" }
+            { name: "Oli", time: "50 mins ago" }
         ]
     },
     {
         id: 6,
-        name: "Cozy Corner Cafe",
+        name: "Kafja e Qetë",
         type: "cafe",
         emoji: "🍰",
-        lat: 40.7549,
-        lng: -73.9840,
+        lat: 40.7210,
+        lng: 19.5580,
         crowd: 2,
         noise: 2,
         checkins: 312,
@@ -116,7 +116,8 @@ let currentFilter = 'all';
 let currentPlace = null;
 
 // ===== INITIALIZE =====
-document.addEventListener('DOMContentLoaded', () => {
+// Wait for window load (not just DOMContentLoaded) so Leaflet is ready
+window.addEventListener('load', () => {
     initializeMap();
     renderPlaces();
     setupEventListeners();
@@ -125,24 +126,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ===== INITIALIZE LEAFLET MAP =====
 function initializeMap() {
-    // Initialize map centered on average coordinates (New York City area)
-    const centerLat = 40.7580;
-    const centerLng = -73.9855;
-    
-    map = L.map('leaflet-map').setView([centerLat, centerLng], 13);
-    
-    // Add OpenStreetMap tile layer
+    if (typeof L === 'undefined') {
+        console.error('Leaflet not loaded yet');
+        return;
+    }
+
+    const centerLat = 40.7239;
+    const centerLng = 19.5567;
+
+    map = L.map('leaflet-map').setView([centerLat, centerLng], 14);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors',
         maxZoom: 19
     }).addTo(map);
-    
-    // Add markers for all places
+
     places.forEach(place => {
         createMapMarker(place);
     });
-    
-    // Invalidate size to ensure proper rendering
+
     setTimeout(() => {
         map.invalidateSize();
     }, 100);
@@ -150,10 +152,8 @@ function initializeMap() {
 
 // ===== CREATE MAP MARKER =====
 function createMapMarker(place) {
-    // Create custom HTML for marker
-    const crowdColor = place.crowd <= 2 ? '#A8D5C4' : place.crowd === 3 ? '#E8C89C' : '#D4B8A0';
-    
-    // Create custom icon
+    const crowdColor = place.crowd <= 2 ? '#A8C5A0' : place.crowd === 3 ? '#E8C89C' : '#D4B8A0';
+
     const customIcon = L.divIcon({
         html: `
             <div style="
@@ -175,38 +175,31 @@ function createMapMarker(place) {
         iconSize: [40, 40],
         className: 'custom-marker'
     });
-    
-    // Create marker
+
     const marker = L.marker([place.lat, place.lng], { icon: customIcon }).addTo(map);
-    
-    // Create popup content
+
     const popupHTML = `
-        <div style="font-family: 'Segoe UI', sans-serif; width: 220px;">
-            <h3 style="margin: 0 0 0.5rem 0; color: #2C3E3D; font-size: 1rem;">${place.name}</h3>
-            <p style="margin: 0.3rem 0; color: #5A7B78; font-size: 0.9rem;"><strong>Type:</strong> ${capitalizeType(place.type)}</p>
-            <p style="margin: 0.3rem 0; color: #5A7B78; font-size: 0.9rem;"><strong>Crowd:</strong> ${generateCrowdDots(place.crowd)}</p>
-            <p style="margin: 0.3rem 0; color: #5A7B78; font-size: 0.9rem;"><strong>Noise:</strong> ${generateNoiseBars(place.noise)}</p>
-            <p style="margin: 0.5rem 0 0 0; color: #5A7B78; font-size: 0.85rem;">✓ ${place.checkins} check-ins</p>
+        <div style="font-family: 'Playfair Display', serif; width: 220px;">
+            <h3 style="margin: 0 0 0.5rem 0; color: #1A2E10; font-size: 1rem;">${place.name}</h3>
+            <p style="margin: 0.3rem 0; color: #8C916C; font-size: 0.9rem;"><strong>Type:</strong> ${capitalizeType(place.type)}</p>
+            <p style="margin: 0.3rem 0; color: #8C916C; font-size: 0.9rem;"><strong>Check-ins:</strong> ${place.checkins}</p>
             <button onclick="openModalFromMap(${place.id})" style="
                 width: 100%;
                 margin-top: 0.8rem;
                 padding: 0.5rem;
-                background-color: #9AC5BB;
+                background-color: #4A6741;
                 color: white;
                 border: none;
                 border-radius: 5px;
                 cursor: pointer;
                 font-weight: 600;
                 font-size: 0.9rem;
+                font-family: 'Playfair Display', serif;
             ">View Details</button>
         </div>
     `;
-    
+
     marker.bindPopup(popupHTML);
-    marker.on('click', () => {
-        openModalFromMap(place.id);
-    });
-    
     markers.push(marker);
 }
 
@@ -230,8 +223,6 @@ function renderPlaces(filter = 'all') {
     filteredPlaces.forEach((place, index) => {
         const placeCard = createPlaceCard(place);
         placesGrid.appendChild(placeCard);
-
-        // Stagger animation
         setTimeout(() => {
             placeCard.style.animation = `slideIn 0.5s ease forwards`;
         }, index * 50);
@@ -249,7 +240,6 @@ function createPlaceCard(place) {
         <div class="place-content">
             <h3>${place.name}</h3>
             <span class="place-type">${capitalizeType(place.type)}</span>
-            
             <div class="place-details">
                 <div class="detail-row">
                     <span class="detail-label">👥 Crowd Level:</span>
@@ -257,7 +247,6 @@ function createPlaceCard(place) {
                         ${generateCrowdDots(place.crowd)}
                     </div>
                 </div>
-                
                 <div class="detail-row">
                     <span class="detail-label">🔊 Noise Level:</span>
                     <div class="noise-indicator">
@@ -265,14 +254,12 @@ function createPlaceCard(place) {
                     </div>
                 </div>
             </div>
-            
             <div class="place-footer">
                 <div class="checkin-count">✓ ${place.checkins} people checked in</div>
                 <button class="place-btn">View Details</button>
             </div>
         </div>
     `;
-
     card.addEventListener('click', () => openModal(place));
     return card;
 }
@@ -302,7 +289,6 @@ function capitalizeType(type) {
 
 // ===== SETUP EVENT LISTENERS =====
 function setupEventListeners() {
-    // Filter buttons
     filterButtons.forEach(button => {
         button.addEventListener('click', () => {
             filterButtons.forEach(btn => btn.classList.remove('active'));
@@ -312,7 +298,6 @@ function setupEventListeners() {
         });
     });
 
-    // Modal close
     closeModal.addEventListener('click', () => {
         modal.classList.remove('show');
     });
@@ -323,7 +308,6 @@ function setupEventListeners() {
         }
     });
 
-    // Modal buttons
     document.getElementById('checkinBtn').addEventListener('click', () => {
         showNotification(`✓ You've checked in to ${currentPlace.name}!`);
         currentPlace.checkins++;
@@ -335,12 +319,10 @@ function setupEventListeners() {
         showNotification(`🎫 Booking feature coming soon for ${currentPlace.name}!`);
     });
 
-    // CTA button
     ctaButton.addEventListener('click', () => {
         document.getElementById('map').scrollIntoView({ behavior: 'smooth' });
     });
 
-    // Mobile nav toggle
     navToggle.addEventListener('click', () => {
         navToggle.classList.toggle('active');
         navLinks.style.display = navToggle.classList.contains('active') ? 'flex' : 'none';
@@ -356,7 +338,6 @@ function setupEventListeners() {
         navLinks.style.zIndex = '999';
     });
 
-    // Close menu when clicking on a link
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', () => {
             navToggle.classList.remove('active');
@@ -373,7 +354,6 @@ function openModal(place) {
     document.getElementById('modalCrowd').innerHTML = generateCrowdDots(place.crowd);
     document.getElementById('modalNoise').innerHTML = generateNoiseBars(place.noise);
 
-    // Populate recent checkins
     const checkinsHtml = place.lastCheckins
         .map(checkin => `<div style="margin-bottom: 0.5rem;"><strong>${checkin.name}</strong> - ${checkin.time}</div>`)
         .join('');
@@ -389,13 +369,14 @@ function showNotification(message) {
         position: fixed;
         top: 20px;
         right: 20px;
-        background-color: #9AC5BB;
+        background-color: #4A6741;
         color: white;
         padding: 1rem 1.5rem;
         border-radius: 50px;
-        box-shadow: 0 5px 20px rgba(154, 197, 187, 0.3);
+        box-shadow: 0 5px 20px rgba(74, 103, 65, 0.3);
         z-index: 3000;
         animation: slideIn 0.3s ease;
+        font-family: 'Playfair Display', serif;
     `;
     notification.textContent = message;
     document.body.appendChild(notification);
@@ -417,30 +398,17 @@ function animateElements() {
         });
     }, { threshold: 0.1 });
 
-    document.querySelectorAll('.step-card').forEach(card => {
-        observer.observe(card);
-    });
-
-    document.querySelectorAll('.stat').forEach(stat => {
-        observer.observe(stat);
-    });
+    document.querySelectorAll('.step-card').forEach(card => observer.observe(card));
+    document.querySelectorAll('.stat').forEach(stat => observer.observe(stat));
 }
 
 // ===== REAL-TIME SIMULATION =====
-// Simulate real-time updates every 30 seconds
 setInterval(() => {
     places.forEach(place => {
-        // Randomly update crowd level (1-4)
         place.crowd = Math.floor(Math.random() * 4) + 1;
-        // Randomly update noise level (1-3)
         place.noise = Math.floor(Math.random() * 3) + 1;
-        // Increment checkins occasionally
-        if (Math.random() > 0.7) {
-            place.checkins += 1;
-        }
+        if (Math.random() > 0.7) place.checkins += 1;
     });
-
-    // Re-render if not in modal
     if (!modal.classList.contains('show')) {
         renderPlaces(currentFilter);
     }
@@ -453,7 +421,7 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-// ===== ACCESSIBILITY: FOCUS MANAGEMENT =====
+// ===== ACCESSIBILITY =====
 document.addEventListener('keydown', (event) => {
     if (event.key === 'Tab' && modal.classList.contains('show')) {
         const focusableElements = modal.querySelectorAll(
@@ -461,7 +429,6 @@ document.addEventListener('keydown', (event) => {
         );
         const firstElement = focusableElements[0];
         const lastElement = focusableElements[focusableElements.length - 1];
-
         if (event.shiftKey && document.activeElement === firstElement) {
             lastElement.focus();
             event.preventDefault();
@@ -472,19 +439,14 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-// ===== ADDITIONAL ANIMATIONS IN CSS =====
-// Add fadeOut animation
+// ===== ADDITIONAL ANIMATIONS =====
 const style = document.createElement('style');
 style.textContent = `
     @keyframes fadeOut {
-        from {
-            opacity: 1;
-        }
-        to {
-            opacity: 0;
-        }
+        from { opacity: 1; }
+        to { opacity: 0; }
     }
 `;
 document.head.appendChild(style);
 
-console.log('QuiteSpace Finder with interactive map initialized successfully! 🌿');
+console.log('QuietSpace Finder initialized');
