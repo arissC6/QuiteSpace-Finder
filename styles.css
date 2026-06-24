@@ -1,214 +1,921 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuietSpace Finder - Find Your Calm Space</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
-</head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo-section">
-                <img src="assets/logo.svg" alt="QuietSpace Finder Logo" class="logo-icon">
-                <span class="logo-text">QuietSpace Finder</span>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#map" class="nav-link">Map</a></li>
-                <li><a href="#places" class="nav-link">Places</a></li>
-                <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
-                <li><a href="#about" class="nav-link">About</a></li>
-            </ul>
-            <button class="nav-toggle" id="navToggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-    </nav>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">Find Your Calm Space</h1>
-            <p class="hero-subtitle">Discover quiet places for work, study, or rest. Real-time crowd insights. Community-powered.</p>
-            <button class="cta-button" id="ctaButton">Explore Now</button>
-        </div>
-        <div class="hero-image">
-            <svg class="hero-illustration" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-                <!-- Background -->
-                <rect width="400" height="300" fill="#EDF2E8"/>
-                <!-- Sky -->
-                <circle cx="80" cy="60" r="40" fill="#C8DDB8" opacity="0.6"/>
-                <!-- Tree -->
-                <rect x="150" y="150" width="30" height="80" fill="#4A6741"/>
-                <circle cx="165" cy="140" r="50" fill="#3D5C35"/>
-                <!-- Park bench -->
-                <rect x="240" y="180" width="80" height="8" fill="#B8A98F"/>
-                <rect x="255" y="188" width="8" height="30" fill="#8B7D6B"/>
-                <rect x="305" y="188" width="8" height="30" fill="#8B7D6B"/>
-                <!-- Person sitting -->
-                <circle cx="280" cy="165" r="12" fill="#9E8B7E"/>
-                <ellipse cx="280" cy="185" rx="8" ry="10" fill="#A8C5D8"/>
-                <!-- Person on bench -->
-                <circle cx="320" cy="172" r="10" fill="#9E8B7E"/>
-                <ellipse cx="320" cy="190" rx="6" ry="8" fill="#D4C5B9"/>
-            </svg>
-        </div>
-    </section>
+/* ===== COLOR PALETTE (Earthy Tones) ===== */
+:root {
+    --primary-mint: #4A6741;
+    --primary-light: #8C916C;
+    --primary-earth: #95714F;
+    --primary-moss: #8C916C;
+    --title-color: #1A2E10;
+    --primary-pale: #D4E8D0;
+    --accent-sand: #C7AF94;
+    --accent-soft: #E8DDD0;
+    --background: #F5EDE0;
+    --text-dark: #8C916C;
+    --text-light: #8C916C;
+    --border-light: #D5C9B8;
+    --success: #A8C5A0;
+    --warning: #E8C89C;
+    --error: #D4B8A0;
+    --white: #FFFFFF;
+}
 
-    <!-- Map Section -->
-    <section class="map-section" id="map">
-        <div class="section-header">
-            <h2>Discover Quiet Spaces Near You</h2>
-            <p>Real-time crowdsourcing data from our community</p>
-        </div>
-        <div class="map-container">
-            <div id="map-placeholder" class="map-placeholder">
-                <div id="leaflet-map" style="width:100%;height:100%;"></div>
-            </div>
-        </div>
-    </section>
+/* ===== GLOBAL STYLES ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    <!-- Places Section -->
-    <section class="places-section" id="places">
-        <div class="section-header">
-            <h2>Popular Quiet Spaces</h2>
-            <p>Browse and check in to help the community</p>
-        </div>
-        <div class="filter-controls">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="library">Libraries</button>
-            <button class="filter-btn" data-filter="park">Parks</button>
-            <button class="filter-btn" data-filter="cafe">Cafes</button>
-        </div>
-        <div class="places-grid" id="placesGrid">
-            <!-- Places will be populated by JavaScript -->
-        </div>
-    </section>
+html {
+    scroll-behavior: smooth;
+}
 
-    <!-- How It Works Section -->
-    <section class="how-it-works" id="how-it-works">
-        <div class="section-header">
-            <h2>How QuietSpace Finder Works</h2>
-            <p>Simple steps to find your perfect calm space</p>
-        </div>
-        <div class="steps-grid">
-            <div class="step-card">
-                <div class="step-number">1</div>
-                <h3>Browse Spaces</h3>
-                <p>Explore quiet places in your area - libraries, parks, and cafes</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">2</div>
-                <h3>Check Real-Time Data</h3>
-                <p>See current crowd levels and noise indicators reported by users</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">3</div>
-                <h3>Check In</h3>
-                <p>Share your experience and help others find the perfect quiet spot</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">4</div>
-                <h3>Book or Visit</h3>
-                <p>Reserve a seat or head over right away - enjoy your peaceful moment</p>
-            </div>
-        </div>
-    </section>
+body {
+    font-family: 'Playfair Display', Georgia, serif;
+    background-color: var(--background);
+    color: var(--text-dark);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
 
-    <!-- About Section -->
-    <section class="about" id="about">
-        <div class="about-content">
-            <h2>About QuietSpace Finder</h2>
-            <p>We believe everyone deserves access to calm, quiet spaces for work, study, and rest. Whether you're a student cramming for exams, a remote worker needing focus, or a senior seeking peaceful moments, we're here to help you find your perfect sanctuary.</p>
-            <p>Our community-powered platform uses real-time check-ins and noise-level reporting to help you make informed decisions about where to spend your time.</p>
-            <div class="impact-stats">
-                <div class="stat">
-                    <h4>500+</h4>
-                    <p>Quiet Spaces</p>
-                </div>
-                <div class="stat">
-                    <h4>10k+</h4>
-                    <p>Active Users</p>
-                </div>
-                <div class="stat">
-                    <h4>100%</h4>
-                    <p>Community-Powered</p>
-                </div>
-            </div>
-        </div>
-    </section>
+/* ===== TYPOGRAPHY ===== */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: var(--title-color);
+}
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>QuietSpace Finder</h4>
-                <p>Find your calm space. Share your peace.</p>
-            </div>
-            <div class="footer-section">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="#map">Map</a></li>
-                    <li><a href="#places">Places</a></li>
-                    <li><a href="#how-it-works">How It Works</a></li>
-                    <li><a href="#about">About</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Community</h4>
-                <ul>
-                    <li><a href="#">Report a Space</a></li>
-                    <li><a href="#">Add a Place</a></li>
-                    <li><a href="#">Help & Support</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 QuietSpace Finder. Made with 🤍 for peaceful moments.</p>
-        </div>
-    </footer>
+h1 {
+    font-size: 3rem;
+    line-height: 1.2;
+}
 
-    <!-- Modal for place details -->
-    <div class="modal" id="placeModal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <div class="modal-header">
-                <h2 id="modalTitle"></h2>
-            </div>
-            <div class="modal-body">
-                <div class="modal-detail">
-                    <h4>Type</h4>
-                    <p id="modalType"></p>
-                </div>
-                <div class="modal-detail">
-                    <h4>Current Crowd Level</h4>
-                    <div class="crowd-indicator" id="modalCrowd"></div>
-                </div>
-                <div class="modal-detail">
-                    <h4>Noise Level</h4>
-                    <div class="noise-bars" id="modalNoise"></div>
-                </div>
-                <div class="modal-detail">
-                    <h4>Recent Check-ins</h4>
-                    <div id="modalCheckins"></div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-checkin" id="checkinBtn">Check In Now</button>
-                <button class="btn-secondary" id="bookBtn">Book a Seat</button>
-            </div>
-        </div>
-    </div>
+h2 {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+}
 
-    <script src="script.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-</body>
-</html>
+h3 {
+    font-size: 1.5rem;
+}
+
+p {
+    color: var(--text-light);
+    font-size: 1rem;
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary-mint);
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--text-dark);
+}
+
+/* ===== BUTTONS ===== */
+.cta-button,
+.btn-checkin,
+.btn-secondary,
+.filter-btn {
+    padding: 0.8rem 1.8rem;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(154, 197, 187, 0.2);
+}
+
+.cta-button {
+    background-color: var(--primary-mint);
+    color: var(--white);
+    margin-top: 1.5rem;
+}
+
+.cta-button:hover {
+    background-color: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(154, 197, 187, 0.3);
+}
+
+.btn-checkin {
+    background-color: var(--success);
+    color: var(--white);
+    margin-right: 1rem;
+}
+
+.btn-checkin:hover {
+    background-color: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background-color: var(--accent-soft);
+    color: var(--text-dark);
+    border: 2px solid var(--primary-mint);
+}
+
+.btn-secondary:hover {
+    background-color: var(--primary-pale);
+}
+
+.filter-btn {
+    background-color: var(--white);
+    color: var(--text-light);
+    border: 2px solid var(--border-light);
+    padding: 0.6rem 1.5rem;
+    font-size: 0.95rem;
+}
+
+.filter-btn.active {
+    background-color: var(--primary-mint);
+    color: var(--white);
+    border-color: var(--primary-mint);
+}
+
+.filter-btn:hover:not(.active) {
+    border-color: var(--primary-mint);
+    color: var(--text-dark);
+}
+
+/* ===== NAVIGATION ===== */
+.navbar {
+    background-color: var(--white);
+    box-shadow: 0 2px 10px rgba(154, 197, 187, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--title-color);
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2.5rem;
+}
+
+.nav-link {
+    color: var(--text-light);
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--primary-mint);
+}
+
+.nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.nav-toggle span {
+    width: 25px;
+    height: 3px;
+    background-color: var(--text-dark);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* ===== HERO SECTION ===== */
+.hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+.hero-content h1 {
+    color: var(--title-color);
+    -webkit-text-fill-color: var(--title-color);
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+}
+
+.hero-image {
+    position: relative;
+}
+
+.hero-illustration {
+    width: 100%;
+    max-width: 400px;
+    filter: drop-shadow(0 10px 30px rgba(154, 197, 187, 0.15));
+    animation: bounce 3s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+/* ===== SECTIONS ===== */
+section {
+    padding: 4rem 2rem;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.section-header h2 {
+    margin-bottom: 0.8rem;
+}
+
+/* ===== MAP SECTION ===== */
+.map-section {
+    background: linear-gradient(135deg, var(--accent-soft) 0%, var(--background) 100%);
+}
+
+.map-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.map-placeholder {
+    width: 100%;
+    height: 500px;
+    background-color: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(154, 197, 187, 0.2);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Leaflet map override styles */
+.map-placeholder #leaflet-map {
+    z-index: 1;
+}
+
+.leaflet-container {
+    background-color: #f0f0f0;
+}
+
+.leaflet-control-container .leaflet-top,
+.leaflet-control-container .leaflet-bottom {
+    z-index: 2;
+}
+
+/* Custom marker styling */
+.leaflet-marker-icon {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.leaflet-popup-content-wrapper {
+    background-color: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(154, 197, 187, 0.2);
+}
+
+.leaflet-popup-content {
+    color: var(--text-dark);
+    font-family: 'Playfair Display', Georgia, serif;
+}
+
+.leaflet-popup-close-button {
+    color: var(--text-light);
+}
+
+.leaflet-popup-close-button:hover {
+    color: var(--text-dark);
+}
+
+.leaflet-popup-tip {
+    background-color: var(--white);
+}
+
+/* Map control styling */
+.leaflet-control-zoom {
+    background-color: var(--white) !important;
+    border: 2px solid var(--border-light) !important;
+    border-radius: 5px !important;
+}
+
+.leaflet-control-zoom a {
+    background-color: transparent !important;
+    color: var(--primary-mint) !important;
+    border: none !important;
+}
+
+.leaflet-control-zoom a:hover {
+    background-color: var(--accent-soft) !important;
+}
+
+.leaflet-control-attribution {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    color: var(--text-light) !important;
+    font-size: 0.75rem !important;
+}
+
+/* ===== PLACES SECTION ===== */
+.places-section {
+    background-color: var(--background);
+}
+
+.filter-controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.places-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.place-card {
+    background-color: var(--white);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(154, 197, 187, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.place-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(154, 197, 187, 0.2);
+}
+
+.place-image {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, var(--primary-mint) 0%, var(--primary-light) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.place-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.place-content {
+    padding: 1.5rem;
+}
+
+.place-content h3 {
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+}
+
+.place-type {
+    display: inline-block;
+    background-color: var(--accent-soft);
+    color: var(--primary-mint);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.place-details {
+    margin: 1rem 0;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+}
+
+.detail-label {
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.crowd-level {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.crowd-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--success);
+}
+
+.crowd-dot.filled {
+    background-color: var(--primary-mint);
+}
+
+.noise-indicator {
+    display: flex;
+    gap: 2px;
+}
+
+.noise-bar {
+    width: 5px;
+    height: 15px;
+    background-color: var(--border-light);
+    border-radius: 2px;
+}
+
+.noise-bar.active {
+    background-color: var(--primary-mint);
+}
+
+.place-footer {
+    border-top: 1px solid var(--border-light);
+    padding-top: 1rem;
+    margin-top: 1rem;
+}
+
+.checkin-count {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 0.8rem;
+}
+
+.place-btn {
+    width: 100%;
+    padding: 0.7rem;
+    background-color: var(--accent-soft);
+    border: 2px solid var(--primary-mint);
+    color: var(--primary-mint);
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.place-btn:hover {
+    background-color: var(--primary-mint);
+    color: var(--white);
+}
+
+/* ===== HOW IT WORKS SECTION ===== */
+.how-it-works {
+    background: linear-gradient(135deg, var(--accent-soft) 0%, var(--background) 100%);
+}
+
+.steps-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.step-card {
+    background-color: var(--white);
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(154, 197, 187, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.step-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(154, 197, 187, 0.2);
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-mint) 0%, var(--primary-light) 100%);
+    color: var(--white);
+    font-size: 1.8rem;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    box-shadow: 0 5px 15px rgba(154, 197, 187, 0.3);
+}
+
+.step-card h3 {
+    margin-bottom: 0.8rem;
+}
+
+.step-card p {
+    font-size: 0.95rem;
+}
+
+/* ===== ABOUT SECTION ===== */
+.about {
+    background-color: var(--white);
+}
+
+.about-content {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.about-content h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.about-content p {
+    font-size: 1.05rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+    text-align: justify;
+}
+
+.impact-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.stat {
+    background: linear-gradient(135deg, var(--accent-soft) 0%, var(--primary-pale) 100%);
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(154, 197, 187, 0.1);
+}
+
+.stat h4 {
+    font-size: 2rem;
+    color: var(--primary-mint);
+    margin-bottom: 0.5rem;
+}
+
+.stat p {
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    background-color: var(--text-dark);
+    color: var(--white);
+    padding: 3rem 2rem 1rem;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.footer-section h4 {
+    color: var(--primary-light);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.footer-section p {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 1rem;
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-section a {
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.3s ease;
+}
+
+.footer-section a:hover {
+    color: var(--primary-light);
+}
+
+.footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(154, 197, 187, 0.2);
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* ===== MODAL ===== */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal.show {
+    display: block;
+}
+
+.modal-content {
+    background-color: var(--white);
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 20px;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close-modal {
+    color: var(--text-light);
+    float: right;
+    font-size: 2rem;
+    font-weight: bold;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-modal:hover {
+    color: var(--text-dark);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--primary-mint) 0%, var(--primary-light) 100%);
+    color: var(--white);
+    padding: 2rem;
+    border-radius: 20px 20px 0 0;
+}
+
+.modal-header h2 {
+    margin: 0;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-detail {
+    margin-bottom: 1.5rem;
+}
+
+.modal-detail h4 {
+    margin-bottom: 0.5rem;
+    color: var(--primary-mint);
+}
+
+.modal-detail p {
+    color: var(--text-light);
+}
+
+.crowd-indicator,
+.noise-bars {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.modal-footer {
+    padding: 1rem 2rem 2rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.modal-footer button {
+    flex: 1;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .nav-toggle {
+        display: flex;
+    }
+
+    .nav-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(8px, 8px);
+    }
+
+    .nav-toggle.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .nav-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
+    }
+
+    .hero {
+        grid-template-columns: 1fr;
+        padding: 3rem 2rem;
+    }
+
+    .hero-image {
+        order: -1;
+    }
+
+    .map-placeholder {
+        height: 400px;
+    }
+
+    .places-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-controls {
+        flex-direction: row;
+    }
+
+    .steps-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-content {
+        margin: 50% auto;
+        width: 90%;
+    }
+
+    .impact-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+    }
+
+    .modal-footer button {
+        margin: 0;
+    }
+
+    .btn-checkin {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.3rem;
+    }
+
+    section {
+        padding: 2rem 1rem;
+    }
+
+    .nav-container {
+        padding: 1rem;
+    }
+
+    .logo-text {
+        display: none;
+    }
+
+    .logo-icon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .hero-title {
+        font-size: 1.8rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .map-placeholder {
+        height: 300px;
+    }
+
+    .places-grid {
+        gap: 1.5rem;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .footer-section ul {
+        padding-left: 0;
+    }
+}
