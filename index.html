@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QuietSpace Finder - Find Your Calm Space</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
 </head>
 <body>
@@ -38,15 +42,21 @@
         </div>
         <div class="hero-image">
             <svg class="hero-illustration" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-                <rect width="400" height="300" fill="#F0F9F7"/>
-                <circle cx="80" cy="60" r="40" fill="#E0F4F1" opacity="0.6"/>
-                <rect x="150" y="150" width="30" height="80" fill="#8DB8A0"/>
-                <circle cx="165" cy="140" r="50" fill="#A8D5C4"/>
+                <!-- Background -->
+                <rect width="400" height="300" fill="#EDF2E8"/>
+                <!-- Sky -->
+                <circle cx="80" cy="60" r="40" fill="#C8DDB8" opacity="0.6"/>
+                <!-- Tree -->
+                <rect x="150" y="150" width="30" height="80" fill="#4A6741"/>
+                <circle cx="165" cy="140" r="50" fill="#3D5C35"/>
+                <!-- Park bench -->
                 <rect x="240" y="180" width="80" height="8" fill="#B8A98F"/>
                 <rect x="255" y="188" width="8" height="30" fill="#8B7D6B"/>
                 <rect x="305" y="188" width="8" height="30" fill="#8B7D6B"/>
+                <!-- Person sitting -->
                 <circle cx="280" cy="165" r="12" fill="#9E8B7E"/>
                 <ellipse cx="280" cy="185" rx="8" ry="10" fill="#A8C5D8"/>
+                <!-- Person on bench -->
                 <circle cx="320" cy="172" r="10" fill="#9E8B7E"/>
                 <ellipse cx="320" cy="190" rx="6" ry="8" fill="#D4C5B9"/>
             </svg>
@@ -61,7 +71,7 @@
         </div>
         <div class="map-container">
             <div id="map-placeholder" class="map-placeholder">
-                <img src="assets/map-preview.jpg" alt="Map of quiet spaces in your area" class="map-image" style="width: 100%; height: 100%; object-fit: cover;">
+                <div id="leaflet-map" style="width:100%;height:100%;"></div>
             </div>
         </div>
     </section>
@@ -78,7 +88,9 @@
             <button class="filter-btn" data-filter="park">Parks</button>
             <button class="filter-btn" data-filter="cafe">Cafes</button>
         </div>
-        <div class="places-grid" id="placesGrid"></div>
+        <div class="places-grid" id="placesGrid">
+            <!-- Places will be populated by JavaScript -->
+        </div>
     </section>
 
     <!-- How It Works Section -->
@@ -118,9 +130,18 @@
             <p>We believe everyone deserves access to calm, quiet spaces for work, study, and rest. Whether you're a student cramming for exams, a remote worker needing focus, or a senior seeking peaceful moments, we're here to help you find your perfect sanctuary.</p>
             <p>Our community-powered platform uses real-time check-ins and noise-level reporting to help you make informed decisions about where to spend your time.</p>
             <div class="impact-stats">
-                <div class="stat"><h4>500+</h4><p>Quiet Spaces</p></div>
-                <div class="stat"><h4>10k+</h4><p>Active Users</p></div>
-                <div class="stat"><h4>100%</h4><p>Community-Powered</p></div>
+                <div class="stat">
+                    <h4>500+</h4>
+                    <p>Quiet Spaces</p>
+                </div>
+                <div class="stat">
+                    <h4>10k+</h4>
+                    <p>Active Users</p>
+                </div>
+                <div class="stat">
+                    <h4>100%</h4>
+                    <p>Community-Powered</p>
+                </div>
             </div>
         </div>
     </section>
@@ -155,7 +176,7 @@
         </div>
     </footer>
 
-    <!-- Modal -->
+    <!-- Modal for place details -->
     <div class="modal" id="placeModal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -163,7 +184,10 @@
                 <h2 id="modalTitle"></h2>
             </div>
             <div class="modal-body">
-                <div class="modal-detail"><h4>Type</h4><p id="modalType"></p></div>
+                <div class="modal-detail">
+                    <h4>Type</h4>
+                    <p id="modalType"></p>
+                </div>
                 <div class="modal-detail">
                     <h4>Current Crowd Level</h4>
                     <div class="crowd-indicator" id="modalCrowd"></div>
@@ -185,5 +209,6 @@
     </div>
 
     <script src="script.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </body>
 </html>
