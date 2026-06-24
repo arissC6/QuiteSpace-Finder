@@ -75,3 +75,115 @@
         <div class="filter-controls">
             <button class="filter-btn active" data-filter="all">All</button>
             <button class="filter-btn" data-filter="library">Libraries</button>
+            <button class="filter-btn" data-filter="park">Parks</button>
+            <button class="filter-btn" data-filter="cafe">Cafes</button>
+        </div>
+        <div class="places-grid" id="placesGrid"></div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-header">
+            <h2>How QuietSpace Finder Works</h2>
+            <p>Simple steps to find your perfect calm space</p>
+        </div>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>Browse Spaces</h3>
+                <p>Explore quiet places in your area - libraries, parks, and cafes</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>Check Real-Time Data</h3>
+                <p>See current crowd levels and noise indicators reported by users</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3>Check In</h3>
+                <p>Share your experience and help others find the perfect quiet spot</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <h3>Book or Visit</h3>
+                <p>Reserve a seat or head over right away - enjoy your peaceful moment</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="about-content">
+            <h2>About QuietSpace Finder</h2>
+            <p>We believe everyone deserves access to calm, quiet spaces for work, study, and rest. Whether you're a student cramming for exams, a remote worker needing focus, or a senior seeking peaceful moments, we're here to help you find your perfect sanctuary.</p>
+            <p>Our community-powered platform uses real-time check-ins and noise-level reporting to help you make informed decisions about where to spend your time.</p>
+            <div class="impact-stats">
+                <div class="stat"><h4>500+</h4><p>Quiet Spaces</p></div>
+                <div class="stat"><h4>10k+</h4><p>Active Users</p></div>
+                <div class="stat"><h4>100%</h4><p>Community-Powered</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>QuietSpace Finder</h4>
+                <p>Find your calm space. Share your peace.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#map">Map</a></li>
+                    <li><a href="#places">Places</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Community</h4>
+                <ul>
+                    <li><a href="#">Report a Space</a></li>
+                    <li><a href="#">Add a Place</a></li>
+                    <li><a href="#">Help & Support</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 QuietSpace Finder. Made with 🤍 for peaceful moments.</p>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal" id="placeModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+            </div>
+            <div class="modal-body">
+                <div class="modal-detail"><h4>Type</h4><p id="modalType"></p></div>
+                <div class="modal-detail">
+                    <h4>Current Crowd Level</h4>
+                    <div class="crowd-indicator" id="modalCrowd"></div>
+                </div>
+                <div class="modal-detail">
+                    <h4>Noise Level</h4>
+                    <div class="noise-bars" id="modalNoise"></div>
+                </div>
+                <div class="modal-detail">
+                    <h4>Recent Check-ins</h4>
+                    <div id="modalCheckins"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-checkin" id="checkinBtn">Check In Now</button>
+                <button class="btn-secondary" id="bookBtn">Book a Seat</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
