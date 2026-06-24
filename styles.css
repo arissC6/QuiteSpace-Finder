@@ -1,9 +1,12 @@
 /* ===== COLOR PALETTE (Earthy Tones) ===== */
 :root {
+    --primary-mint: #95714F;      /* warm brown — main brand color */
+    --primary-light: #8C916C;     /* moss green — hover/accent */
     --primary-earth: #95714F;
     --primary-moss: #8C916C;
     --primary-pale: #D4E8E4;
     --accent-sand: #C7AF94;
+    --accent-soft: #C7AF94;       /* sand — used for soft backgrounds */
     --background: #EADED0;
     --text-dark: #2C3E3D;
     --text-light: #5A7B78;
